@@ -1,26 +1,27 @@
-const createError = require('http-errors');
-const express = require('express');
+var createError = require('http-errors');
+var express = require('express');
+var path = require('path');
+var cookieParser = require('cookie-parser');
+var logger = require('morgan');
 
-
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const logger = require('morgan');
-
-const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
+var indexRouter = require('./routes/index');
+var usersRouter = require('./routes/users');
 const catalogRouter = require('./routes/catalog');  //Import routes for "catalog" area of site
 const dotenv = require('dotenv')
 
 
-const app = express();
+var app = express();
 dotenv.config({ path: '.env' })
-//Mangoose connection
+
+
 const mongoose = require('mongoose');
+const dev_db_url = process.env.ATLAS_URI;
+const mongoDB = process.env.MONGODB_URI || dev_db_url;
+mongoose.connect(mongoDB, { useNewUrlParser: true  ,   useUnifiedTopology: true });
 mongoose.Promise = global.Promise;
-const mongoDB = 'mongodb+srv://s538097:Mohan@321@cluster0-gpwcm.mongodb.net/local_library?retryWrites=true&w=majority';
-mongoose.connect(mongoDB, {useNewUrlParser: true,useUnifiedTopology: true});
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
